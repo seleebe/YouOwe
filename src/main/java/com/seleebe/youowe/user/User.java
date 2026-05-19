@@ -23,6 +23,8 @@ public class User {
 
   private String phoneNumber;
 
-  @ManyToMany(mappedBy = "users")
+  private String password;
+
+  @ManyToMany(mappedBy = "members")
   private Set<Group> groups = new HashSet<>();
 }

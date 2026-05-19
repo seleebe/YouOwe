@@ -34,5 +34,5 @@ public class Group {
       joinColumns = @JoinColumn(name = "group_id"),
       inverseJoinColumns = @JoinColumn(name = "user_id")
   )
-  private Set<User> users = new HashSet<>();
+  private Set<User> members = new HashSet<>();
 }
