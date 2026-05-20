@@ -9,6 +9,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.Getter;
@@ -20,7 +21,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Group {
+public class Group implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
