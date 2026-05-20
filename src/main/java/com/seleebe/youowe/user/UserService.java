@@ -4,6 +4,7 @@ import com.seleebe.youowe.exception.ResourceNotFoundException;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
   private final UserRepository userRepository;
+  private final PasswordEncoder passwordEncoder;
 
   public User getUserEntity(Long id) {
     return userRepository.findById(id)
@@ -21,7 +23,7 @@ public class UserService {
   public UserResponseDto createUser(CreateUserDto dto) {
     User user = new User();
     user.setUsername(dto.getUsername());
-    user.setPassword(dto.getPassword());
+    user.setPassword(passwordEncoder.encode(dto.getPassword()));
     user.setPhoneNumber(dto.getPhoneNumber());
 
     User savedUser = userRepository.save(user);
