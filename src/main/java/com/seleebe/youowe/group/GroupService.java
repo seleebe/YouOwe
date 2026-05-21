@@ -2,6 +2,7 @@ package com.seleebe.youowe.group;
 
 import com.seleebe.youowe.debt.DebtRepository;
 import com.seleebe.youowe.exception.ActiveDebtException;
+import com.seleebe.youowe.exception.NoAccessException;
 import com.seleebe.youowe.exception.ResourceNotFoundException;
 import com.seleebe.youowe.user.User;
 import com.seleebe.youowe.user.UserRepository;
@@ -27,10 +28,10 @@ public class GroupService {
   }
 
   @Transactional
-  public GroupResponseDto createGroup(CreateGroupDto dto) {
-    User creator = userRepository.findById(dto.getCreatorId())
+  public GroupResponseDto createGroup(CreateGroupDto dto, String currentUsername) {
+    User creator = userRepository.findByUsername(currentUsername)
         .orElseThrow(() -> new ResourceNotFoundException(
-            "Creator not found with id: " + dto.getCreatorId()));
+            "Creator not found with username: " + currentUsername));
 
     Group group = new Group();
     group.setName(dto.getName());
@@ -52,8 +53,13 @@ public class GroupService {
   }
 
   @Transactional
-  public GroupResponseDto addUserToGroup(Long groupId, Long userId) {
+  public GroupResponseDto addUserToGroup(Long groupId, Long userId, String currentUsername) {
     Group group = getGroupEntity(groupId);
+
+    if (!group.getAdmin().getUsername().equals(currentUsername)) {
+      throw new NoAccessException("Only group creator can delete the group");
+    }
+
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
     group.getMembers().add(user);
@@ -78,8 +84,13 @@ public class GroupService {
   }
 
   @Transactional
-  public void removeUserFromGroup(Long groupId, Long userId) {
+  public void removeUserFromGroup(Long groupId, Long userId, String currentUsername) {
     Group group = getGroupEntity(groupId);
+
+    if (!group.getAdmin().getUsername().equals(currentUsername)) {
+      throw new NoAccessException("Only group creator can delete the group");
+    }
+
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
     if (hasActiveDebts(group, user)) {
@@ -87,5 +98,20 @@ public class GroupService {
     }
     group.getMembers().remove(user);
     groupRepository.save(group);
+  }
+
+  @Transactional
+  public void deleteGroup(Long groupId, String currentUsername) {
+    Group group = getGroupEntity(groupId);
+
+    if (!group.getAdmin().getUsername().equals(currentUsername)) {
+      throw new NoAccessException("Only group creator can delete the group");
+    }
+
+    if (debtRepository.existsByGroup(group)) {
+      throw new ActiveDebtException("Can not delete the group until all debts are settled");
+    }
+
+    groupRepository.delete(group);
   }
 }

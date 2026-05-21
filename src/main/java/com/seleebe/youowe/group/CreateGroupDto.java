@@ -6,5 +6,4 @@ import lombok.Data;
 public class CreateGroupDto {
 
   private String name;
-  private Long creatorId;
 }

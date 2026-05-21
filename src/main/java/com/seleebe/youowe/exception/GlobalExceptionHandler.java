@@ -28,6 +28,12 @@ public class GlobalExceptionHandler {
     return new ErrorResponseDto(ex.getMessage());
   }
 
+  @ExceptionHandler(NoAccessException.class)
+  @ResponseStatus(HttpStatus.FORBIDDEN)
+  public ErrorResponseDto handleNoAccessException(NoAccessException ex) {
+    return new ErrorResponseDto(ex.getMessage());
+  }
+
   @ExceptionHandler(Exception.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   public ErrorResponseDto handleAllOtherExceptions(Exception ex) {

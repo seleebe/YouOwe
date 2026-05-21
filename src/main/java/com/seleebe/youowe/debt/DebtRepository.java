@@ -17,4 +17,14 @@ public interface DebtRepository extends JpaRepository<Debt, Long> {
   Optional<Debt> findByGroupAndDebtorAndCreditor(Group group, User debtor, User creditor);
 
   List<Debt> findByGroup(Group group);
+
+  boolean existsByGroup(Group group);
+
+  List<Debt> findAllByDebtor(User debtor);
+
+  List<Debt> findAllByCreditor(User creditor);
+
+  boolean existsByDebtor(User debtor);
+
+  boolean existsByCreditor(User creditor);
 }

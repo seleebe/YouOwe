@@ -25,7 +25,7 @@ public class User implements UserDetails {
 
   private String username;
 
-  private String phoneNumber;
+  private String paymentInfo;
 
   private String password;
 
