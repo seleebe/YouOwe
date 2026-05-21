@@ -7,7 +7,7 @@ public class CreateUserDto {
 
   private String username;
 
-  private String phoneNumber;
+  private String paymentInfo;
 
   private String password;
 }
